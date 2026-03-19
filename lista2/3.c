@@ -44,3 +44,8 @@ void calculate_nilakantha_series()
     }
     printf("Valor aproximado de PI é : %.5lf\n", sum);
 }
+
+int main(){
+    calculate_gregory_leibniz();
+    calculate_nilakantha_series();
+}

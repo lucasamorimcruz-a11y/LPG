@@ -3,7 +3,7 @@
 void min_matriz (float mat[3][4], float *pMin, int *pI, int *pJ){
     *pMin = mat[0][0];
     for (int i = 0; i < 3; i++){
-        for (int j = i; j < 4; j++){
+        for (int j = 0; j < 4; j++){
             if (mat[i][j] < *pMin) {
                 *pMin = mat[i][j];
                 *pI = i;
@@ -19,7 +19,7 @@ int main(){
     int pI, pJ;
     printf("Insira os valores na matrix 3x4\n");
     for (int i = 0; i < 3; i++){
-            for (int j = i; j < 4; j++){
+            for (int j = 0; j < 4; j++){
                 scanf("%f", &mat[i][j]);
         }
     }

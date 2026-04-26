@@ -13,7 +13,7 @@ void max_min (int vet[], int tam, int *pMin, int *pMax){
 int main(){
     int tam, pMin, pMax;
     printf("Qual o tamanho do vetor?\n");
-    scanf("%d", tam);
+    scanf("%d", &tam);
     int vet[tam];
     printf ("Insira os valores do vetor\n");
     for (int i =0 ; i < tam; i++){

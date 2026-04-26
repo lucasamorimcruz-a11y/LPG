@@ -2,10 +2,12 @@
 
 void max_vetor (float vet[], int tam, float *pMax, int *pIndice){
     *pMax = vet[0];
+    *pIndice = 0;
     for (int i = 1; i < tam; i++){
-        if (vet[i] > *pMax)
+        if (vet[i] > *pMax){
          *pMax = vet[i];
          *pIndice = i;
+        }
     }
     return;
 }

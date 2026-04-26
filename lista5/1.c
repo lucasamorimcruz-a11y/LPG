@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 void inc_dec (int *a, int *b){
-    *a++;
-    *b--;
+    (*a)++;
+    (*b)--;
     return;
 }
 

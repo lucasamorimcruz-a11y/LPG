@@ -1,24 +1,22 @@
 #include <stdio.h>
 
 int fibo (int n){
-    if (n == 1 || n == 2){
-        printf("1");
-        return 1;
+    int prim = 1;
+    int seg = 1;
+    int soma = 0;
+    for (int i = 2; i < n; i++){
+        soma = prim + seg;
+        seg = prim;
+        prim = soma;
+        printf("%d\n", soma);
     }
-    else {
-        int ans1 = fibo (n-1);
-        int ans2 = fibo (n-2);
-        
-    }
+    return 0;
 }
 
 int main(){
     int n; 
     printf("Digite número:\n");
     scanf("%d", &n);
-    for (int i = 0; i < n; i++){
-        fibo (n);
-    }
+    fibo (n);
     return 0;
-
 }

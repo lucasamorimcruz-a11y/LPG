@@ -19,6 +19,7 @@ int main(){
     for (int i =0 ; i < tam; i++){
         scanf("%d", &vet[i]);
     }
+    max_min(vet, tam, &pMin, &pMax);
     printf("O valor máximo do vetor é %d e o mínimo é %d", pMax, pMin);
     return 0;
 

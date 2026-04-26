@@ -1,12 +1,13 @@
 #include <stdio.h>
 
 int tipo_triangulo(float x, float y, float z){
-    if (x == y && x == z) return 1;
-    else if (x == y && x != z) return 2;
-    else if (x != y && x != z && y != z) return 3;
-    else{
+    if (x + y <= z || x + z <= y || y + z <= x)
         return 0;
-    }
+    if (x == y && y == z)
+        return 1;
+    if (x == y || x == z || y == z)
+        return 2;
+    return 3;
 }
 
 int main(){

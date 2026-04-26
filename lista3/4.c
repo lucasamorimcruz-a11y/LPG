@@ -12,12 +12,13 @@ int soma_impares (int x, int y){
             if (i % 2 != 0) soma+= i;
         }
     }
+    return soma;
 }
 
 int main(){
     printf("Escolha dois números para ser calculado a soma");
     int a, b;
     scanf("%d%d", &a, &b);
-    printf("A soma de ímpares entre os dois números é de: ", soma_impares(a,b));
+    printf("A soma de ímpares entre os dois números é de: %d", soma_impares(a,b));
     return 0;
 }

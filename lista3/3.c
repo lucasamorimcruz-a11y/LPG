@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 int is_digit(char c){   
-    if (c - '\0' <= 9 && c - '\0' >= 1){
-        int num = c - '\0';
+    if (c <= 9 && c >= 0){
+        int num = c - '0';
         printf("O número é %d\n", num);
         return 1;
     }

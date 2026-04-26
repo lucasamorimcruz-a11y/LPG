@@ -3,12 +3,11 @@
 int fibo (int n){
     int prim = 1;
     int seg = 1;
-    int soma = 0;
-    for (int i = 2; i < n; i++){
-        soma = prim + seg;
-        seg = prim;
-        prim = soma;
-        printf("%d\n", soma);
+    for (int i = 1; i <= n; i++){
+        printf("%d\n", prim);
+        int soma = prim + seg;
+        prim = seg;
+        seg = soma;
     }
     return 0;
 }

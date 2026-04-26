@@ -1,13 +1,11 @@
 #include <stdio.h>
 
 int busca_seq_rec (int v[], int n, int chave){
-    if (n == 0) return 0;
-    if (v[n] != chave){
-        return busca_seq_rec (v, n-1, chave);
+    if (n == 0) return -1;
+    if (v[n - 1] == chave){
+        return n-1;
     }
-    else{
-        return n;
-    }
+    return busca_seq_rec (v, n-1, chave);
 }
 int main(){
     int n, chave;
@@ -21,7 +19,7 @@ int main(){
         scanf("%d", &v[i]);
     }
     int ans = busca_seq_rec(v,n,chave);
-    if (ans == 0) printf("Não foi possível encontrar o número no vetor\n");
+    if (ans == -1) printf("Não foi possível encontrar o número no vetor\n");
     else{
         printf("O número está no index %d\n", ans);
     }

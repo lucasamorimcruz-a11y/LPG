@@ -12,4 +12,5 @@ int main()
         sum += term;
     }
     printf("%.1lf", sum);
+    return 0;
 }

@@ -48,4 +48,5 @@ void calculate_nilakantha_series()
 int main(){
     calculate_gregory_leibniz();
     calculate_nilakantha_series();
+    return 0;
 }

@@ -30,4 +30,5 @@ int main()
     printf("%i valor(es) impar(es)\n", imp);
     printf("%i valor(es) positivo(s)\n", pos);
     printf("%i valor(es) negativo(s)\n", neg);
+    return 0;
 }

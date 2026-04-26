@@ -28,4 +28,5 @@ int main()
     {
         printf("Eixo X");
     }
+    return 0;
 }

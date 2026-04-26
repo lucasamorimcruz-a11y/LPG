@@ -14,4 +14,5 @@ int main()
     else {
         printf("O jogo durou %i\n", (24 - hora_inicial + hora_final));
     }
+    return 0;
 }

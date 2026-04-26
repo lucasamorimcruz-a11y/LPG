@@ -13,4 +13,5 @@ int main(){
         e += 1.0 / (double) (fact(i));
     }
     printf ("%.5lf", e);
+    return 0;
 }

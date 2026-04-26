@@ -19,4 +19,5 @@ int main()
         sum+= curr;
     }
     printf("Soma: %i\n", sum);
+    return 0;
 }

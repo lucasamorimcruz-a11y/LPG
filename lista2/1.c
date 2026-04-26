@@ -9,4 +9,5 @@ int main(){
         sum += 1/(double) i;
     }
     printf("Soma é: %lf", sum);
+    return 0;
 }

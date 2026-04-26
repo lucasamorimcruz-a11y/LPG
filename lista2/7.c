@@ -41,4 +41,5 @@ int main()
     }
 
     printf("%.5lf\n", cos_x);
+    return 0;
 }

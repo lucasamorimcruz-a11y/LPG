@@ -33,4 +33,5 @@ int main()
         flip = !flip;
     }
     printf("%.5lf", sen_x);
+    return 0;
 }

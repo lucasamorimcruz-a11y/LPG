@@ -28,8 +28,7 @@ jogador_t *tabela_com_ranking = NULL;
 int gerar_minas(dificuldade_t dificuldade_escolhida);
 dificuldade_t escolha_dificuldade();
 void calcular_pontuacao(jogador_t *jogador, dificuldade_t dificuldade);
-void contador_de_jogadas();
-void get_input(int *escolha_de_linha, int *escolha_de_coluna);
+void get_input(int *escolha_de_linha, int *escolha_de_coluna, int *reiniciar, int *desistir);
 void criar_tabuleiro();
 void gerar_tabuleiro(dificuldade_t dificuldade);
 void imprimir_tabuleiro();
@@ -38,43 +37,34 @@ void imprimir_tutorial();
 void imprimir_comandos();
 void imprimir_ranking();
 void inicializar_jogador(jogador_t *jogador);
-void imprimir_menu(dificuldade_t dificuldade);
-void gerar_contagem();
-void loop();
+void imprimir_menu(dificuldade_t *dificuldade);
+void loop(dificuldade_t *dificuldade);
 void gerar_ranking(jogador_t *jogador);
-void reiniciar_partida(jogador_t *jogador);
+void reiniciar_partida(jogador_t *jogador, dificuldade_t *dificuldade);
 void limpar_nome(jogador_t *jogador);
 void limpar_tela();
+int verificar_condicao_vitoria();
 int main()
 {
     srand(time(NULL));
-    time_t inicial, final;
-    inicial = time(NULL);
     dificuldade_t dificuldade = escolha_dificuldade();
-    imprimir_menu(dificuldade);
-    criar_tabuleiro();
-    gerar_tabuleiro(dificuldade);
-    calcular_minas();
-    loop();
-    final = time(NULL);
+    imprimir_menu(&dificuldade);
     return 0;
 }
 int gerar_minas(dificuldade_t dificuldade_escolhida)
 {
-    int quantidade_de_minas;
     if (dificuldade_escolhida == FACIL)
     {
-        quantidade_de_minas = 5;
+        return 5;
     }
     else if (dificuldade_escolhida == MEDIO)
     {
-        quantidade_de_minas = 8;
+        return 8;
     }
     else
     {
-        quantidade_de_minas = 10;
+        return 10;
     }
-    return quantidade_de_minas;
 }
 dificuldade_t escolha_dificuldade()
 {
@@ -90,8 +80,9 @@ dificuldade_t escolha_dificuldade()
         printf("Opção inválida.\n");
         scanf("%d", &n);
     }
+    dificuldade_escolhida = n - 1;
     limpar_tela();
-    return (dificuldade_t)(n - 1);
+    return dificuldade_escolhida;
 }
 void calcular_pontuacao(jogador_t *jogador, dificuldade_t dificuldade)
 {
@@ -125,8 +116,11 @@ void calcular_pontuacao(jogador_t *jogador, dificuldade_t dificuldade)
     }
     return;
 }
-void get_input(int *escolha_de_linha, int *escolha_de_coluna)
+void get_input(int *escolha_de_linha, int *escolha_de_coluna, int *reiniciar, int *desistir)
 {
+
+    *reiniciar = 0;
+    *desistir = 0;
     printf("Insira qual a linha que você tem interesse em verificar. (Insira número de 1 a %i) \n", TAM);
     scanf("%d", escolha_de_linha);
     while (*escolha_de_linha > TAM || *escolha_de_linha < 1)
@@ -172,27 +166,38 @@ void gerar_tabuleiro(dificuldade_t dificuldade)
 }
 void imprimir_tabuleiro()
 {
+    printf("   ");
+    for (int i = 0; i < TAM; i++)
+        printf("%2d", i + 1);
+    printf("\n");
     for (int i = 0; i < TAM; i++)
     {
+        printf("%2d", i + 1);
         for (int j = 0; j < TAM; j++)
         {
             if (escolhido[i][j] == 0)
             {
-                printf("# ");
+                printf(" #");
+            }
+            else if (matriz[i][j] == -1)
+            {
+                printf(" *");
             }
             else
             {
-                printf("%d ", matriz[i][j]);
+                printf("%2d ", matriz[i][j]);
             }
         }
         printf(" \n");
     }
-    printf("Pressione R caso queira REINICIAR O JOGO");
+    printf("\n Digite no formato '-> LINHA <- -> COLUNA <-' || [R para REINCIAR e Q para DESISTIR]\n");
+    ;
 }
 void inicializar_jogador(jogador_t *jogador)
 {
-    printf("Qual o nome do jogador?\n");
+    printf("Qual o nome do jogador? (Primeiro nome somente)\n");
     scanf("%s", jogador->nome);
+    fflush(stdout);
     jogador->pontos = 0;
     jogador->tempo = 0;
     return;
@@ -222,18 +227,43 @@ void calcular_minas()
 }
 void imprimir_tutorial()
 {
-    printf("Seja bem-vindo!\n");
+    printf(" ==== TUTORIAL ==== \n");
+    printf(" # -> Casa ainda a ser revelada. Pode ser escolhida. \n");
+    printf(" 0 -> Nenhuma mina adjacente.\n ");
+    printf(" N (N sendo qualquer número) -> Quantidade de minas ao redor da casa.\n");
+    printf(" * -> Mina. Fim de jogo.\n");
+    printf(" == Dificuldades == \n");
+    printf(" FÁCIL - 5 minas espalhadas pelo campo\n");
+    printf(" MÉDIO - 8 minas espalhadas pelo campo\n");
+    printf(" DÍFICIL - 10 minas espalhadas pelo campo\n");
+    printf("Pressione 'V' para retornar ao menu principal\n");
+    char c;
+    while (c != 'v')
+    {
+        getc(c);
+    }
+    fflush(stdout);
+    return;
 }
 void imprimir_comandos()
 {
     printf(" ====== COMANDOS ======\n");
+    printf("  LINHA COLUNA  - Digite o número da linha e da coluna separados por espaço\n");
+    printf("1 ~ 8 - Escolha um número de 1 a 8 para escolher qual coluna/linha você vai querer descobrir\n ");
     printf("Q - Pressione Q para desistir do jogo");
     printf("R - Pressione R para reiniciar o jogo sem salvar os status atuais\n");
-    printf("1 ~ 8 - Escolha um número de 1 a 8 para escolher qual coluna/linha você vai querer descobrir\n ");
+    printf("Pressione 'V' para retornar ao menu principal\n");
+    char c;
+    while (c != 'v')
+    {
+        getc(c);
+    }
+    fflush(stdout);
     return;
 }
 void imprimir_ranking()
 {
+    limpar_tela();
     FILE *pointeiro_pro_arquivo = fopen("Ranking_Oficial.txt", "r");
     char buffer[1024];
     if (!pointeiro_pro_arquivo)
@@ -246,56 +276,138 @@ void imprimir_ranking()
         printf("%s\n", buffer);
     }
     fclose(pointeiro_pro_arquivo);
+    intf("Pressione 'V' para retornar ao menu principal\n");
+    char c;
+    while (c != 'v')
+    {
+        getc(c);
+    }
+    fflush(stdout);
     return;
 }
-void imprimir_menu(dificuldade_t dificuldade)
+void imprimir_menu(dificuldade_t *dificuldade)
 {
-    printf(" ======== CAMPO MINADO ======== \n");
-    printf("Escolha uma das seguintes opções\n");
-    printf("1 - Começar jogo\n");
-    printf("2 - Tutorial\n");
-    printf("3 - Comandos\n");
-    printf("4 - Rankings\n");
-    printf("5 - Sair\n");
-    int op;
-    scanf("%d", &op);
-    switch (op)
-    {
-    case 1:
-        loop();
-        break;
-    case 2:
-        imprimir_tutorial();
-        break;
-    case 3:
-        imprimir_comandos();
-        break;
-    case 4:
-        imprimir_ranking();
-        break;
-    case 5:
-        return;
-    default:
-        printf("Opção inválida.\n");
-    }
-}
-void loop()
-{
-    jogador_t jogador;
-    inicializar_jogador(&jogador);
-    int linha, coluna;
     while (1)
     {
-        get_input(&linha, &coluna);
-        escolhido[linha][coluna] = 1;
-        if (matriz[linha][coluna] == -1)
+        printf(" ======== CAMPO MINADO ======== \n");
+        printf("Escolha uma das seguintes opções\n");
+        printf("1 - Começar jogo\n");
+        printf("2 - Tutorial\n");
+        printf("3 - Comandos\n");
+        printf("4 - Rankings\n");
+        printf("5 - Sair\n");
+        int op;
+        scanf("%d", &op);
+        switch (op)
         {
-            limpar_tela();
-            printf(" == VOCÊ PERDEU == !\n");
-            gerar_ranking(&jogador);
+        case 1:
+            criar_tabuleiro();
+            gerar_tabuleiro(*dificuldade);
+            calcular_minas();
+            loop(*dificuldade);
             break;
+        case 2:
+            imprimir_tutorial();
+            break;
+        case 3:
+            imprimir_comandos();
+            break;
+        case 4:
+            imprimir_ranking();
+            break;
+        case 5:
+            limpar_tela();
+            *dificuldade = escolha_dificuldade();
+            printf("Dificuldade alterada!\n");
+            break;
+        case 6:
+            printf("Até logo!\n");
+            free(tabela_com_ranking);
+            return;
+        default:
+            printf("Opção inválida.\n");
         }
     }
+}
+void loop(dificuldade_t *dificuldade)
+{
+    limpar_tela();
+    jogador_t jogador;
+    inicializar_jogador(&jogador);
+
+    time_t comeco_jogo = time(NULL);
+    while (1)
+    {
+        limpar_tela();
+        imprimir_tabuleiro();
+        int linha = 0, coluna = 0, reiniciar = 0, desistir = 0;
+        get_input(&linha, &coluna, &reiniciar, &desistir);
+        if (reiniciar)
+        {
+            reiniciar_partida(&jogador, dificuldade);
+            comeco_jogo = time(NULL);
+            continue;
+        }
+        if (desistir)
+        {
+            jogador.tempo = (int)(comeco_jogo);
+            calcular_pontuacao(&jogador, dificuldade);
+            printf("\nVocê desistiu. Pontuação: %d\n", jogador.pontos);
+            gerar_ranking(&jogador);
+            printf("Pressione ENTER para voltar ao menu...");
+            fflush(stdout);
+            while (getchar() != '\n')
+                ;
+            getchar();
+            return;
+        }
+
+        if (escolhido[linha][coluna] == 1)
+        {
+            printf("Essa casa já foi revelada! Tente outra.\n");
+            continue;
+        }
+
+        escolhido[linha][coluna] = 1;
+
+        if (matriz[linha][coluna] == -1)
+        {
+            for (int i = 0; i < TAM; i++)
+                for (int j = 0; j < TAM; j++)
+                    if (matriz[i][j] == -1)
+                        escolhido[i][j] = 1;
+
+            limpar_tela();
+            imprimir_tabuleiro();
+            jogador.tempo = (int)(comeco_jogo);
+            calcular_pontuacao(&jogador, dificuldade);
+            printf("\n== VOCÊ PERDEU! ==  Pontuação: %d\n", jogador.pontos);
+            gerar_ranking(&jogador);
+            printf("Pressione ENTER para voltar ao menu...");
+            fflush(stdout);
+            while (getchar() != '\n')
+                ;
+            getchar();
+            return;
+        }
+
+        if (verificar_vitoria())
+        {
+            limpar_tela();
+            imprimir_tabuleiro();
+            jogador.tempo = (int)(comeco_jogo);
+            calcular_pontuacao(&jogador, dificuldade);
+            printf("\n== VOCÊ VENCEU! ==  Pontuação: %d\n", jogador.pontos);
+            gerar_ranking(&jogador);
+            printf("Pressione ENTER para voltar ao menu...");
+            fflush(stdout);
+            while (getchar() != '\n')
+                ;
+            getchar();
+            return;
+        }
+    }
+
     return;
 }
 int compare(const void *a, const void *b)
@@ -306,40 +418,45 @@ int compare(const void *a, const void *b)
 }
 void gerar_ranking(jogador_t *jogador)
 {
-    FILE *file = fopen("Ranking_Oficial.txt", "a");
-    if (file == NULL)
-    {
-        perror("Erro ao criar/acessar arquivo");
-        return;
-    }
     contador_de_players++;
-    tabela_com_ranking = realloc(tabela_com_ranking, contador_de_players * sizeof(jogador_t));
-    if (tabela_com_ranking == NULL)
+
+    jogador_t *tempo = realloc(tabela_com_ranking, contador_de_players * sizeof(jogador_t));
+    if (!tempo)
     {
-        perror("Erro ao alocar\n");
+        perror("Erro ao alocar.");
         return;
     }
     tabela_com_ranking[contador_de_players - 1] = *jogador;
     qsort(tabela_com_ranking, contador_de_players, sizeof(jogador_t), compare);
+    FILE *file = fopen("Ranking_Oficial.txt", "a");
+    if (!file)
+    {
+        perror("Erro ao abrir arquivo do ranking");
+        return;
+    }
+    fprintf(file, "%-s %-s %-s %s\n", "POS", "NOME", "PONTOS", "TEMPO");
+    fprintf(file, "----------------------------------------------------\n");
+    for (int i = 0; i < contador_de_players; i++)
+    {
+        fprintf(file, "%-5d %-25s %-10d %-10d\n",
+                i + 1,
+                tabela_com_ranking[i].nome,
+                tabela_com_ranking[i].pontos,
+                tabela_com_ranking[i].tempo);
+    }
     fclose(file);
     return;
 }
-void reiniciar_partida(jogador_t *jogador)
+void reiniciar_partida(jogador_t *jogador, dificuldade_t *dificuldade)
 {
-    for (int i = 0; i < TAM; i++)
-    {
-        for (int j = 0; j < TAM; j++)
-        {
-            matriz[i][j] = 0;
-            escolhido[i][j] = 0;
-            tabuleiro[i][j] = 0;
-        }
-    }
+    criar_tabuleiro();
+    gerar_tabuleiro(dificuldade);
+    calcular_minas();
     limpar_nome(jogador);
-    jogador->pontos = 0;
     jogador->tempo = 0;
+    jogador->pontos = 0;
     limpar_tela();
-    return;
+    inicializar_jogador(jogador);
 }
 void limpar_nome(jogador_t *jogador)
 {

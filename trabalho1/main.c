@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#define MAX 1000
 #define TAM 8
 enum dificuldade
 {
@@ -19,7 +18,6 @@ struct Jogador
 typedef enum dificuldade dificuldade_t;
 typedef struct Jogador jogador_t;
 
-char tabuleiro[TAM][TAM];
 int matriz[TAM][TAM];
 int escolhido[TAM][TAM];
 int contador_de_players = 0;
@@ -76,11 +74,14 @@ dificuldade_t escolha_dificuldade()
     printf("1 - FÁCIL\n");
     printf("2 - MÉDIO\n");
     printf("3 - DÍFICIL\n");
-    scanf("%d", &n);
-    while (n < 1 || n > 3)
+    while (1)
     {
+        if (scanf("%d", &n) == 1 && n >= 1 && n <= 3)
+        {
+            break;
+        }
         printf("Opção inválida.\n");
-        scanf("%d", &n);
+        limpa_entrada();
     }
     dificuldade_escolhida = n - 1;
     limpar_tela();
@@ -129,74 +130,46 @@ void limpa_entrada()
     {
     }
 }
-void get_input(int *escolha_de_linha, int *escolha_de_coluna, int *reiniciar, int *desistir)
+void get_input(int *linha, int *coluna, int *reiniciar, int *desistir)
 {
-    char buffer[64];
-    char *ptr;
-    int valor;
-    int resultado_scanf;
+    char entrada[20];
     *reiniciar = 0;
     *desistir = 0;
-
     while (1)
     {
-        printf("Insira qual a linha que você tem interesse em verificar. (Insira número de 1 a %i) \n", TAM);
-        resultado_scanf = scanf("%63s", buffer);
-        if (resultado_scanf == EOF)
-        {
-            printf("Entrada encerrada. Saindo do jogo.\n");
-            exit(0);
-        }
-        if (resultado_scanf != 1)
-        {
-            limpa_entrada();
-            continue;
-        }
-        if (buffer[0] == 'R' || buffer[0] == 'r')
+        printf("Linha (1-%d) ou R/Q: ", TAM);
+        scanf("%19s", entrada);
+        if (entrada[0] == 'R' || entrada[0] == 'r')
         {
             *reiniciar = 1;
             return;
         }
-        if (buffer[0] == 'Q' || buffer[0] == 'q')
+        if (entrada[0] == 'Q' || entrada[0] == 'q')
         {
             *desistir = 1;
             return;
         }
-        valor = strtoi(buffer, &ptr, 10);
-        if (*ptr != '\0' || valor < 1 || valor > TAM)
+        int valor = atoi(entrada);
+        if (valor >= 1 && valor <= TAM)
         {
-            printf("Número fora do alcance do tabuleiro. Insira novamente\n");
-            continue;
+            *linha = valor - 1;
+            break;
         }
-        *escolha_de_linha = valor;
-        break;
+        printf("Entrada inválida.\n");
     }
-    (*escolha_de_linha)--;
     while (1)
     {
-        printf("Insira qual a coluna que você tem interesse em verificar. (Insira número de 1 a %i) \n", TAM);
-        resultado_scanf = scanf("%63s", buffer);
-        if (resultado_scanf == EOF)
+        printf("Coluna (1-%d): ", TAM);
+        if (scanf("%d", coluna) == 1 &&
+            *coluna >= 1 &&
+            *coluna <= TAM)
         {
-            printf("Entrada encerrada. Saindo do jogo.\n");
-            exit(0);
+            (*coluna)--;
+            break;
         }
-        if (resultado_scanf != 1)
-        {
-            limpa_entrada();
-            continue;
-        }
-        valor = strtoi(buffer, &ptr, 10);
-        if (*ptr != '\0' || valor < 1 || valor > TAM)
-        {
-            printf("Número fora do alcance do tabuleiro. Insira novamente\n");
-            continue;
-        }
-        *escolha_de_coluna = (int)valor;
-        break;
+        printf("Entrada inválida.\n");
+        limpa_entrada();
     }
-    (*escolha_de_coluna)--;
-    return;
 }
 void criar_tabuleiro()
 {
@@ -372,8 +345,8 @@ void imprimir_menu(dificuldade_t *dificuldade)
         int op;
         if (scanf("%d", &op) != 1)
         {
-            limpa_entrada();
             printf("Opção inválida.\n");
+            limpa_entrada();
             continue;
         }
         switch (op)
@@ -485,7 +458,6 @@ void loop(dificuldade_t dificuldade)
             fflush(stdout);
             while (getchar() != '\n')
             {
-
             }
             limpar_tela();
             return;
@@ -529,19 +501,19 @@ void gerar_ranking(jogador_t *jogador)
     tabela_com_ranking = tempo;
     tabela_com_ranking[contador_de_players - 1] = *jogador;
     qsort(tabela_com_ranking, contador_de_players, sizeof(jogador_t), compare);
-    FILE *file = fopen("Ranking_Oficial.txt", "w");
-    if (!file)
+    FILE *ponteiro_pro_arquivo = fopen("Ranking_Oficial.txt", "w");
+    if (!ponteiro_pro_arquivo)
     {
         perror("Erro ao abrir arquivo do ranking");
         return;
     }
-    fprintf(file, "%-s %-s %-s %s\n", "POS", "NOME", "PONTOS", "TEMPO");
-    fprintf(file, "----------------------------------------------------\n");
+    fprintf(ponteiro_pro_arquivo, "%-s %-s %-s %s\n", "POS", "NOME", "PONTOS", "TEMPO");
+    fprintf(ponteiro_pro_arquivo, "----------------------------------------------------\n");
     for (int i = 0; i < contador_de_players; i++)
     {
-        fprintf(file, "%-5d %-25s %-10d %-10d\n", i + 1, tabela_com_ranking[i].nome, tabela_com_ranking[i].pontos, tabela_com_ranking[i].tempo);
+        fprintf(ponteiro_pro_arquivo, "%-5d %-25s %-10d %-10d\n", i + 1, tabela_com_ranking[i].nome, tabela_com_ranking[i].pontos, tabela_com_ranking[i].tempo);
     }
-    fclose(file);
+    fclose(ponteiro_pro_arquivo);
     return;
 }
 void reiniciar_partida(jogador_t *jogador, dificuldade_t dificuldade)
